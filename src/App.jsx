@@ -7,39 +7,47 @@ function App() {
   const [numberAllowed, setNumberAllowed] = useState(false);
   const [charactersAllowed, setCharacterAllowed] = useState(false);
   const [password, setPassword] = useState('');
+  const [lowerCaseAllowed, setLowerCaseAllowed] = useState();
+  const [upperCaseAllowed,setUpperCaseAllowed] = useState();
 
   const passwordRef = useRef(null);
 
   const passwordGenerator = useCallback(() => {
     let pass = '';
-    let str = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    let str = '';
     if (numberAllowed) {
       str += '0123456789';
     }
     if (charactersAllowed) {
       str += ' !#$%&\'()*+,-./';
     }
+    if (upperCaseAllowed){
+      str+='ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    }
+    if(lowerCaseAllowed){
+      str+='abcdefghijklmnopqrstuvwxyz'
+    }
     for (let i = 1; i <= length; i++) {
       let charIndex = Math.floor(Math.random() * str.length);
       pass += str.charAt(charIndex);
     }
     setPassword(pass);
-  }, [length, numberAllowed, charactersAllowed]);
+  }, [length, numberAllowed, charactersAllowed,upperCaseAllowed,lowerCaseAllowed]);
  const copyPasswordToClipboard = useCallback(()=>{
   passwordRef.current?.select()
    window.navigator.clipboard.writeText(password)
  },[password])
 useEffect(()=>{
   passwordGenerator()
-},[length,numberAllowed,charactersAllowed,passwordGenerator])
+},[length,numberAllowed,charactersAllowed,upperCaseAllowed,lowerCaseAllowed,passwordGenerator])
 
 
   return (
     <>
-   <div className='w-full max-w-md mx-auto py-10 shadow-md  px-4 my-40 border-solid border-2 border-gray-200 text-orange-600 bg-gray-800'>
+   <div className='w-full max-w-md mx-auto py-10 shadow-md  px-10 my-40 border-solid border-2 border-gray-200 text-orange-600 bg-gray-800'>
     <h1 className='text-white text-center my-3 py-3 text-2xl font-mono'>Password Generator</h1>
     <div className='flex shadow  overflow-hidden '>
-      <input type="text" value={password} onChange={passwordGenerator} min={6} max={100} className='outline-none w-full py-1 px-3 my-4 rounded-xl ' placeholder='Click on Generate button' readOnly ref={passwordRef}  
+      <input type="text" value={password} onChange={passwordGenerator} min="6" max="100" className='outline-none w-full py-1 px-3 my-4 rounded-xl ' placeholder='Click on Generate button' readOnly ref={passwordRef}  
         />
     </div>
     <div className='flex gap-x-10 mt-0 '>
@@ -64,6 +72,18 @@ useEffect(()=>{
         <label className='text-white text-semibold font-mono'>Included Characters:</label>
         <input type="checkbox" defaultChecked={numberAllowed}    onChange={()=>{
           setCharacterAllowed((prev)=>!prev);
+        }}/>
+      </div>
+      <div className='flex items-center justify-between'>
+        <label className='text-white text-semibold font-mono'>Include uppercase letters:</label>
+        <input type="checkbox" defaultChecked={numberAllowed}    onChange={()=>{
+          setUpperCaseAllowed((prev)=>!prev);
+        }}/>
+      </div>
+      <div className='flex items-center justify-between'>
+        <label className='text-white text-semibold font-mono'>Include lowercase letters:</label>
+        <input type="checkbox" defaultChecked={numberAllowed}    onChange={()=>{
+          setLowerCaseAllowed((prev)=>!prev);
         }}/>
       </div>
     </div>
